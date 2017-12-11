@@ -16,6 +16,8 @@
 
 package se.meldrum.leffe
 
+import java.io.{BufferedWriter, File, FileWriter}
+
 import net.ruippeixotog.scalascraper.browser.JsoupBrowser
 import net.ruippeixotog.scalascraper.dsl.DSL._
 import net.ruippeixotog.scalascraper.dsl.DSL.Extract._
@@ -58,7 +60,14 @@ case class Stock(name: String,
 }
 
 object Leffe extends App {
-  val file = "stocks"
+
+  val file = {
+    if (args.length == 1)
+      args(0)
+    else
+      getConfigPath()
+  }
+
   println(Console.BOLD + "Fetching info from -> " + file)
   val stocks = fetchStocks(file)
 
@@ -85,5 +94,20 @@ object Leffe extends App {
       .filter(line => !line.startsWith("#") && !line.isEmpty)
       .map(_.split(",") match {case Array(a,b) => Stock(a,b)})
       .toList
+  }
+
+  private def getConfigPath(): String = {
+    val home = sys.env("HOME")
+    val leffePath = home + "/.leffe"
+    val configPath = leffePath + "/" + "stocks"
+    val config = new File(configPath)
+    if (!config.exists()) {
+      config.createNewFile()
+      val bw = new BufferedWriter(new FileWriter(config))
+      bw.write("# Custom name, link to stock on Avanza\n")
+      bw.write("ABB Ltd, https://www.avanza.se/aktier/om-aktien.html/5447/abb-ltd\n")
+      bw.close()
+    }
+    configPath
   }
 }
