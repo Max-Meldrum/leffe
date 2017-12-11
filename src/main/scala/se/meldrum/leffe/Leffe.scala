@@ -24,7 +24,8 @@ import net.ruippeixotog.scalascraper.dsl.DSL.Extract._
 
 import scala.concurrent.{Await, Future}
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.duration.DurationInt
+import scala.concurrent.duration._
+
 import scala.io.Source
 import scala.util.{Failure, Success, Try}
 
@@ -74,7 +75,7 @@ object Leffe extends App {
   stocks match {
     case Success(seq) =>
       val analyzed = Future.sequence(seq.map(_.analyze()))
-      analyzed.onComplete {
+      Await.ready(analyzed, 30 seconds).onComplete {
         case Success(st) =>
           println(String.format("%5s %5s %5s", Console.YELLOW + "[" +Console.GREEN +
             "Name", Console.BLUE + "Price", Console.CYAN + "Last updated" + Console.YELLOW + "]"))
@@ -84,9 +85,13 @@ object Leffe extends App {
           println(Console.RED + "Something went wrong..")
           println(e.getMessage)
       }
-      Await.ready(analyzed, 20.seconds)
     case Failure(e) => println(e)
   }
+
+  // For some reason, stocks are not getting printed when the project is executed in a jar
+  // It seems to be exiting before displayStock is executed, which it should not...
+  Thread.sleep(1000)
+
 
   private def fetchStocks(file: String): Try[Seq[Stock]] = Try {
     Source.fromFile(file)
@@ -99,8 +104,13 @@ object Leffe extends App {
   private def getConfigPath(): String = {
     val home = sys.env("HOME")
     val leffePath = home + "/.leffe"
+    val leffe = new File(leffePath)
+    if (!leffe.exists())
+      leffe.mkdir()
+
     val configPath = leffePath + "/" + "stocks"
     val config = new File(configPath)
+
     if (!config.exists()) {
       config.createNewFile()
       val bw = new BufferedWriter(new FileWriter(config))
