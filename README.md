@@ -5,6 +5,12 @@ With Leffe, I can easily access this from the terminal.
 
 While coding this, I was enjoying a beer of Leffe, hence the name.
 
+Installing
+```
+$ sudo curl -L -o /usr/local/bin/leffe.jar https://git.io/vbE9i && bash <(curl -s https://git.io/vbux3)
+
+```
+
 
 File setup
 ```
