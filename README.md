@@ -7,12 +7,11 @@ While coding this, I was enjoying a beer of Leffe, hence the name.
 
 Installing
 ```
-$ sudo curl -L -o /usr/local/bin/leffe.jar https://git.io/vbE9i && bash <(curl -s https://git.io/vbux3)
+$ ./install.sh
 
 ```
 
-
-File setup
+Example config
 ```
 # Custom name, link to stock on Avanza
 THQ Nordic, https://www.avanza.se/aktier/om-aktien.html/707695/thq-nordic-b
@@ -24,4 +23,20 @@ Bure Equity, https://www.avanza.se/aktier/om-aktien.html/5277/bure-equity
 ```
 
 Leffe scrapes data from Avanza, so Avanza links is a requirement.
+
+
+Running
+```
+# Just leffe will run with the config file found at $HOME/.leffe/stocks
+$ leffe
+# Or you can specify a file
+$ leffe <file>
+
+```
+
+![alt text](https://github.com/Max-Meldrum/leffe/blob/master/img/run.png?raw=true "Leffe")
+
+
+
+
 
